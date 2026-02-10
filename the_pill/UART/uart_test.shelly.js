@@ -1,7 +1,7 @@
 /**
  * @title UART test
  * @description Simple UART loopback test that sends periodic messages and prints received data.
- * @status under development
+ * @status production
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/the_pill/UART/uart_test.shelly.js
  */
 
