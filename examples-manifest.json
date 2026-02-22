@@ -454,6 +454,36 @@
     "description": "Simple UART loopback test that sends periodic messages and prints received data."
   },
   {
+    "fname": "the_pill/ys_irtm/ysirtm.shelly.js",
+    "title": "YS-IRTM infrared UART library",
+    "description": "UART protocol implementation for YS-IRTM to send and receive NEC IR codes."
+  },
+  {
+    "fname": "the_pill/ys_irtm/btn2ir.shelly.js",
+    "title": "YS-IRTM button-to-IR example",
+    "description": "Maps Shelly buttons and inputs to IR codes using YS-IRTM."
+  },
+  {
+    "fname": "the_pill/ys_irtm/ir2sw.shelly.js",
+    "title": "YS-IRTM IR-to-switch example",
+    "description": "Maps received IR codes to Shelly switch actions."
+  },
+  {
+    "fname": "the_pill/ys_irtm/ir_full.shelly.js",
+    "title": "YS-IRTM advanced IR automation example",
+    "description": "Bidirectional IR automation with scenes, HTTP calls, and switch integration."
+  },
+  {
+    "fname": "the_pill/ys_irtm/ir_learn.shelly.js",
+    "title": "YS-IRTM IR learn mode",
+    "description": "Captures and prints NEC IR codes for reuse in other scripts."
+  },
+  {
+    "fname": "the_pill/ys_irtm/tv_ir.shelly.js",
+    "title": "YS-IRTM TV remote codes",
+    "description": "Preconfigured NEC IR codes for common TV brands using YS-IRTM."
+  },
+  {
     "fname": "weather-env/cover-control-weather.shelly.js",
     "title": "Control a Shelly 2.5 (Gen1) depending on current cloud conditions",
     "description": "The script, when run, will fetch via REST api from a weather service the current conditions for a location check if\ncloud coverage is above or below certain percentage and respectively open or close window shades by calling a Shelly\n2.5 (Gen1) endpoint."
