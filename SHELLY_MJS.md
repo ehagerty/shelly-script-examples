@@ -123,9 +123,29 @@ blu-assistant/print-label-online.shelly.js: BLU device label printer
 ===
 Scans for Shelly BLU devices and sends device info to an online label printer.
 
+cury/button-control/cury-btn-listener.shelly.js: Cury Button Listener
+===
+Listens for BLU button events and controls the paired Cury animation script.
+
+cury/button-control/cury-btn-test.shelly.js: Cury Button Test Scanner
+===
+Scans BTHome BLE advertisements, logs nearby devices, and prints decoded events for the target BLU button.
+
 cury/cury-light-language-2.shelly.js: Cury Light Language v2
 ===
 Expressive light patterns for Shelly Cury UI and ambient LEDs with 9 communication states.
+
+cury/legacy/cury-mini.shelly.js: Cury Mini Legacy
+===
+Compact legacy Cury light-language implementation with built-in state logic, timing patterns, and periodic hardware checks.
+
+cury/light-language/cury-light-language-2.shelly.js: Cury Light Language v2
+===
+Expressive light patterns for Shelly Cury UI and ambient LEDs with 9 communication states.
+
+cury/light-language/cury-light-language-v2.shelly.js: Cury Intensity Crossfade and Ambient Fade
+===
+Runs a 6-step Cury animation loop with crossfading UI intensity and ambient color flash/fade transitions.
 
 howto/input-event.shelly.js: Example - Input events
 ===
@@ -396,13 +416,13 @@ the_pill/MODBUS/Deye/the_pill_mbsa_deye_vc.shelly.js: Deye SG02LP1 MODBUS-RTU + 
 ===
 MODBUS-RTU reader for Deye SG02LP1 solar inverter with Virtual Component updates. Reads parameters over UART (RS485) and pushes values to user-defined virtual number components.
 
+the_pill/MODBUS/JK200-MBS/the_pill_mbsa_jk200.shelly.js: JK200 BMS MODBUS-RTU Reader
+===
+MODBUS-RTU reader for Jikong JK-PB series BMS over RS485.
+
 the_pill/UART/uart_test.shelly.js: UART test
 ===
 Simple UART loopback test that sends periodic messages and prints received data.
-
-the_pill/ys_irtm/ysirtm.shelly.js: YS-IRTM infrared UART library
-===
-UART protocol implementation for YS-IRTM to send and receive NEC IR codes.
 
 the_pill/ys_irtm/btn2ir.shelly.js: YS-IRTM button-to-IR example
 ===
@@ -423,6 +443,10 @@ Captures and prints NEC IR codes for reuse in other scripts.
 the_pill/ys_irtm/tv_ir.shelly.js: YS-IRTM TV remote codes
 ===
 Preconfigured NEC IR codes for common TV brands using YS-IRTM.
+
+the_pill/ys_irtm/ysirtm.shelly.js: YS-IRTM infrared UART library
+===
+UART protocol implementation for YS-IRTM to send and receive NEC IR codes.
 
 weather-env/cover-control-weather.shelly.js: Control a Shelly 2.5 (Gen1) depending on current cloud conditions
 ===

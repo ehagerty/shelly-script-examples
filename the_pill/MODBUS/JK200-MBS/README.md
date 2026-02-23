@@ -1,7 +1,5 @@
 # JK200 BMS - MODBUS-RTU Reader
 
-> **Under Development** - This script is currently under development and may not be fully functional.
-
 Script for reading live data from a **Jikong JK-PB series BMS** (commonly called JK200 for the 200A variants) over MODBUS-RTU via RS485/UART using The Pill.
 
 Compatible models: JK-PB2A8S20P, JK-PB2A16S20P, JK-PB2A20S20P (and other PB-series variants).
@@ -26,11 +24,11 @@ Reads two register blocks per poll cycle and prints a full status report to the 
 By default the JK BMS communicates over its own proprietary protocol. To activate RS485 MODBUS slave mode:
 
 1. Open the **JiKong BMS** app and connect via Bluetooth.
-2. Go to **Settings → Device Address**.
+2. Go to **Settings -> Device Address**.
 3. Set the address to any value from **1 to 15** (0 = disabled).
 4. The chosen address becomes the MODBUS slave ID.
 
-Default communication: **9600 baud, 8N1**.
+Communication: **115200 baud, 8N1** (protocol "001 - JK BMS RS485 Modbus V1.0").
 
 ---
 
@@ -58,48 +56,46 @@ Default communication: **9600 baud, 8N1**.
 | A (D+) | A (D+) |
 | B (D-) | B (D-) |
 
-> The JK BMS RS485 port is a 4-pin JST-style connector. Typical pinout: GND, A, B, +5V. Consult your BMS manual for the exact connector layout — not all units are identical.
+> The JK BMS RS485 port is a 4-pin JST-style connector. Typical pinout: GND, A, B, +5V. Consult your BMS manual for the exact connector layout -- not all units are identical.
 
 ---
 
 ## Register Map
 
-The JK BMS uses **stride-2 MODBUS addressing** (JK BMS RS485 Modbus V1.0 spec):
+The JK BMS uses **stride-1 addressing** for 16-bit fields and **stride-2** for 32-bit fields — no padding registers are inserted between values:
 
 | Value width | MODBUS registers used | Layout |
 |---|---|---|
-| U_WORD / S_WORD (16-bit) | 2 | `[data, padding]` |
-| U_DWORD / S_DWORD (32-bit) | 4 | `[hi, lo, padding, padding]` |
+| U_WORD / S_WORD (16-bit) | 1 | `[data]` |
+| U_DWORD / S_DWORD (32-bit) | 2 | `[hi, lo]` |
 
-### Block A — Cell Voltages (`FC 0x03`, start `0x1200`)
+> Note: The V1.0 protocol specification describes stride-2 WORDs and stride-4 DWORDs with padding. The actual device behaviour at 115200 baud omits all padding registers.
+
+### Block A — Cell Voltages (`FC 0x03`, start `0x1200`, qty `CELL_COUNT`)
 
 | Address | Parameter | Type | Unit |
 |---|---|---|---|
 | 0x1200 | Cell 1 voltage | U_WORD | mV |
-| 0x1202 | Cell 2 voltage | U_WORD | mV |
-| … | … | … | … |
-| 0x1200 + (N-1)×2 | Cell N voltage | U_WORD | mV |
+| 0x1201 | Cell 2 voltage | U_WORD | mV |
+| ... | ... | ... | ... |
+| 0x1200 + (N-1) | Cell N voltage | U_WORD | mV |
 
-Read quantity = `CELL_COUNT × 2` registers. Cell N voltage = `registers[(N-1) × 2]`.
+Read quantity = `CELL_COUNT` registers. Cell N voltage = `registers[N-1]`.
 
 ### Block B — Key Parameters (`FC 0x03`, start `0x128A`, qty 30)
 
-| Address | Offset in response | Parameter | Type | Unit | Notes |
+| Offset | Address | Parameter | Type | Unit | Notes |
 |---|---|---|---|---|---|
-| 0x128A | regs[0] | MOSFET temperature | S_WORD | 0.1 °C | |
-| 0x128B | regs[1] | (padding) | — | — | |
-| 0x128C–0x128F | regs[2–5] | (reserved) | — | — | |
-| 0x1290 | regs[6–7] | Pack voltage | U_DWORD | mV | `regs[6]×65536 + regs[7]` |
-| 0x1292 | regs[8–9] | (padding) | — | — | |
-| 0x1294 | regs[10–11] | Pack power | S_DWORD | mW | + = charging |
-| 0x1296 | regs[12–13] | (padding) | — | — | |
-| 0x1298 | regs[14–15] | Pack current | S_DWORD | mA | + = charging |
-| 0x129A | regs[16–17] | (padding) | — | — | |
-| 0x129C | regs[18] | Temperature 1 | S_WORD | 0.1 °C | |
-| 0x129E | regs[20] | Temperature 2 | S_WORD | 0.1 °C | |
-| 0x12A0 | regs[22–23] | Alarm bitmask | U_DWORD | — | see below |
-| 0x12A4 | regs[26] | Balance current | S_WORD | mA | |
-| 0x12A6 | regs[28] | State of Charge | U_WORD | % | |
+| regs[0] | 0x128A | MOSFET temperature | S_WORD | 0.1 degC | |
+| regs[1..2] | 0x128B-C | (reserved) | -- | -- | |
+| regs[3..4] | 0x128D-E | Pack voltage | U_DWORD | mV | `regs[3]*65536 + regs[4]` |
+| regs[5..6] | 0x128F-90 | Pack power | S_DWORD | mW | + = charging |
+| regs[7..8] | 0x1291-92 | Pack current | S_DWORD | mA | + = charging |
+| regs[9] | 0x1293 | Temperature 1 | S_WORD | 0.1 degC | |
+| regs[10] | 0x1294 | Temperature 2 | S_WORD | 0.1 degC | |
+| regs[11..12] | 0x1295-96 | Alarm bitmask | U_DWORD | -- | see below |
+| regs[13] | 0x1297 | Balance current | S_WORD | mA | |
+| regs[14] | 0x1298 | State of Charge | U_WORD | % | |
 
 ### Alarm Bitmask
 
@@ -125,11 +121,11 @@ Read quantity = `CELL_COUNT × 2` registers. Cell N voltage = `registers[(N-1) �
 
 ```javascript
 var CONFIG = {
-  BAUD_RATE: 9600,          // must match BMS setting
+  BAUD_RATE: 115200,        // JK BMS RS485 Modbus V1.0 operates at 115200 baud
   MODE: '8N1',
   SLAVE_ID: 1,              // must match BMS Device Address setting
   CELL_COUNT: 16,           // 8 / 10 / 12 / 14 / 16 / 20 / 24
-  RESPONSE_TIMEOUT: 2000,   // ms — generous for bulk reads at 9600 baud
+  RESPONSE_TIMEOUT: 2000,   // ms
   INTER_READ_DELAY: 100,    // ms between block A and block B reads
   POLL_INTERVAL: 10000,     // ms between full poll cycles
   DEBUG: false,             // true = print raw TX/RX frames
@@ -149,17 +145,19 @@ Cells: 16 | Poll: 10 s
 
 --- JK200 BMS ---
   Cells (16):
-      1: 3.412 V
-      2: 3.411 V
-      3: 3.413 V (max)
-      4: 3.410 V (min)
+      1: 3.420 V
+      2: 3.419 V
+      3: 3.421 V
+      4: 3.418 V (min)
      ...
-     16: 3.412 V
-  Delta: 0.003 V | Min: 3.410 V (cell 4) | Max: 3.413 V (cell 3)
-  Pack:    54.592 V | 48.500 A | 2647.712 W
-  SOC:     78 %
-  Temp:    MOS 34.5 C | T1 27.8 C | T2 28.1 C
-  Balance: 0.050 A
+      6: 3.428 V (max)
+     ...
+     16: 3.415 V
+  Delta: 0.013 V | Min: 3.415 V (cell 16) | Max: 3.428 V (cell 6)
+  Pack:    54.667 V | 0.585 A | 31.979 W
+  SOC:     63 %
+  Temp:    MOS 22.5 C | T1 20.3 C | T2 21.1 C
+  Balance: 0.000 A
   Alarms:  none
 ```
 
@@ -167,12 +165,13 @@ Cells: 16 | Poll: 10 s
 
 ## Implementation Notes
 
-- Only FC 0x03 (Read Holding Registers) is used — the script is **read-only**.
+- Only FC 0x03 (Read Holding Registers) is used -- the script is **read-only**.
 - Two bulk reads per poll: block A (cell voltages) then block B (parameters), with a 100 ms inter-read delay for bus stability.
 - CRC-16 is computed via lookup table (MODBUS polynomial 0xA001).
 - MODBUS exception responses are detected (FC | 0x80) and surfaced as error strings.
 - A configurable response timeout (default 2 s) guards each request.
 - Signed 32-bit values (power, current) are assembled from two 16-bit registers using integer arithmetic, avoiding bitshift overflow in mJS.
+- All source characters are ASCII -- mJS (Shelly scripting runtime) does not support Unicode in script source.
 
 ---
 

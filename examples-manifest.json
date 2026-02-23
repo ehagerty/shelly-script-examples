@@ -140,9 +140,29 @@
     "description": "Scans for Shelly BLU devices and sends device info to an online label printer."
   },
   {
-    "fname": "cury/cury-light-language-2.shelly.js",
+    "fname": "cury/button-control/cury-btn-listener.shelly.js",
+    "title": "Cury Button Listener",
+    "description": "Listens for BLU button events and controls the paired Cury animation script."
+  },
+  {
+    "fname": "cury/button-control/cury-btn-test.shelly.js",
+    "title": "Cury Button Test Scanner",
+    "description": "Scans BTHome BLE advertisements, logs nearby devices, and prints decoded events for the target BLU button."
+  },
+  {
+    "fname": "cury/legacy/cury-mini.shelly.js",
+    "title": "Cury Mini Legacy",
+    "description": "Compact legacy Cury light-language implementation with built-in state logic, timing patterns, and periodic hardware checks."
+  },
+  {
+    "fname": "cury/light-language/cury-light-language-2.shelly.js",
     "title": "Cury Light Language v2",
     "description": "Expressive light patterns for Shelly Cury UI and ambient LEDs with 9 communication states."
+  },
+  {
+    "fname": "cury/light-language/cury-light-language-v2.shelly.js",
+    "title": "Cury Intensity Crossfade and Ambient Fade",
+    "description": "Runs a 6-step Cury animation loop with crossfading UI intensity and ambient color flash/fade transitions."
   },
   {
     "fname": "howto/input-event.shelly.js",
@@ -449,14 +469,14 @@
     "description": "MODBUS-RTU reader for Deye SG02LP1 solar inverter with Virtual Component updates. Reads parameters over UART (RS485) and pushes values to user-defined virtual number components."
   },
   {
+    "fname": "the_pill/MODBUS/JK200-MBS/the_pill_mbsa_jk200.shelly.js",
+    "title": "JK200 BMS MODBUS-RTU Reader",
+    "description": "MODBUS-RTU reader for Jikong JK-PB series BMS over RS485."
+  },
+  {
     "fname": "the_pill/UART/uart_test.shelly.js",
     "title": "UART test",
     "description": "Simple UART loopback test that sends periodic messages and prints received data."
-  },
-  {
-    "fname": "the_pill/ys_irtm/ysirtm.shelly.js",
-    "title": "YS-IRTM infrared UART library",
-    "description": "UART protocol implementation for YS-IRTM to send and receive NEC IR codes."
   },
   {
     "fname": "the_pill/ys_irtm/btn2ir.shelly.js",
@@ -482,6 +502,11 @@
     "fname": "the_pill/ys_irtm/tv_ir.shelly.js",
     "title": "YS-IRTM TV remote codes",
     "description": "Preconfigured NEC IR codes for common TV brands using YS-IRTM."
+  },
+  {
+    "fname": "the_pill/ys_irtm/ysirtm.shelly.js",
+    "title": "YS-IRTM infrared UART library",
+    "description": "UART protocol implementation for YS-IRTM to send and receive NEC IR codes."
   },
   {
     "fname": "weather-env/cover-control-weather.shelly.js",
