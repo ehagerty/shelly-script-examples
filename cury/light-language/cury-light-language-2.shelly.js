@@ -2,7 +2,7 @@
  * @title Cury Light Language v2
  * @description Expressive light patterns for Shelly Cury UI and ambient LEDs with 9 communication states.
  * @status production
- * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/cury/cury-light-language-2.shelly.js
+ * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/cury/light-language/cury-light-language-2.shelly.js
  */
 
 // States: boot, ready, touch, pairing, active, low_liquid, error, night, goodbye

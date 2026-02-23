@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 ## 2026-02
+- Mark YS-IRTM scripts as production; add all 6 to manifest; remove Under Development banner from README
+- Add JK200 BMS MODBUS-RTU reader (`the_pill/MODBUS/JK200-MBS`) with README
+- Mark Deye SG02LP1 MODBUS-RTU scripts as production; fix @link URLs; add to manifest; add README
 - Auto-set script name on device from original filename in `put_script.py`
 - Add default manifest path to `sync-manifest-json.py` based on script location
 - Remove non-production `ble/events-to-kvs.shelly.js` from manifest (missing @status)
@@ -10,6 +13,9 @@ All notable changes to this project will be documented in this file.
 - Add dev branch to CI/CD pull_request trigger
 - Mark SDS011 examples as under development
 - Mark all the_pill examples as under development
+- Expand `cury/` README files with per-script use cases and user personas
+- Standardize JSDoc metadata headers for all `cury/**/*.shelly.js` scripts (`@title`, `@description`, `@status`, `@link`)
+- Reorganize `cury/` examples into `light-language/`, `button-control/`, and `legacy/` folders with README files and duplicate analysis notes
 - Add `switch-input/rgbw-remote-controll.shelly.js` and register it in the manifest/index
 - Restructure loose HTTP integration scripts into per-script folders with matching README files
 - Fix incomplete Prometheus move (update manifest, @link, README, delete old file)

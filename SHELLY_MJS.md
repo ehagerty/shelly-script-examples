@@ -388,9 +388,41 @@ switch-input/shelly2p-domo-coverfix.shelly.js: Shelly Plus 2PM cover fix for Dom
 Simple fix for outgoing Domoticz MQTTAD command 'GoToPosition'.
  Shelly firmware 0.x supported. Developed for ShellyTeacher4Domo.
 
+the_pill/MODBUS/Deye/the_pill_mbsa_deye.shelly.js: Deye SG02LP1 MODBUS-RTU
+===
+MODBUS-RTU example for reading Deye SG02LP1 solar inverter parameters over UART using the MODBUS-RTU master library.
+
+the_pill/MODBUS/Deye/the_pill_mbsa_deye_vc.shelly.js: Deye SG02LP1 MODBUS-RTU + Virtual Components
+===
+MODBUS-RTU reader for Deye SG02LP1 solar inverter with Virtual Component updates. Reads parameters over UART (RS485) and pushes values to user-defined virtual number components.
+
 the_pill/UART/uart_test.shelly.js: UART test
 ===
 Simple UART loopback test that sends periodic messages and prints received data.
+
+the_pill/ys_irtm/ysirtm.shelly.js: YS-IRTM infrared UART library
+===
+UART protocol implementation for YS-IRTM to send and receive NEC IR codes.
+
+the_pill/ys_irtm/btn2ir.shelly.js: YS-IRTM button-to-IR example
+===
+Maps Shelly buttons and inputs to IR codes using YS-IRTM.
+
+the_pill/ys_irtm/ir2sw.shelly.js: YS-IRTM IR-to-switch example
+===
+Maps received IR codes to Shelly switch actions.
+
+the_pill/ys_irtm/ir_full.shelly.js: YS-IRTM advanced IR automation example
+===
+Bidirectional IR automation with scenes, HTTP calls, and switch integration.
+
+the_pill/ys_irtm/ir_learn.shelly.js: YS-IRTM IR learn mode
+===
+Captures and prints NEC IR codes for reuse in other scripts.
+
+the_pill/ys_irtm/tv_ir.shelly.js: YS-IRTM TV remote codes
+===
+Preconfigured NEC IR codes for common TV brands using YS-IRTM.
 
 weather-env/cover-control-weather.shelly.js: Control a Shelly 2.5 (Gen1) depending on current cloud conditions
 ===
