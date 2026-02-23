@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 ## 2026-02
+- Expand `cury/` README files with per-script use cases and user personas
+- Standardize JSDoc metadata headers for all `cury/**/*.shelly.js` scripts (`@title`, `@description`, `@status`, `@link`)
+- Reorganize `cury/` examples into `light-language/`, `button-control/`, and `legacy/` folders with README files and duplicate analysis notes
 - Add `switch-input/rgbw-remote-controll.shelly.js` and register it in the manifest/index
 - Restructure loose HTTP integration scripts into per-script folders with matching README files
 - Fix incomplete Prometheus move (update manifest, @link, README, delete old file)
