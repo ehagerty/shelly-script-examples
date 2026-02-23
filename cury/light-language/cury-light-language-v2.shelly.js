@@ -1,7 +1,7 @@
 /**
  * @title Cury Intensity Crossfade and Ambient Fade
  * @description Runs a 6-step Cury animation loop with crossfading UI intensity and ambient color flash/fade transitions.
- * @status under development
+ * @status production
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/cury/light-language/cury-light-language-v2.shelly.js
  */
 
