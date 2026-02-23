@@ -131,10 +131,6 @@ cury/button-control/cury-btn-test.shelly.js: Cury Button Test Scanner
 ===
 Scans BTHome BLE advertisements, logs nearby devices, and prints decoded events for the target BLU button.
 
-cury/cury-light-language-2.shelly.js: Cury Light Language v2
-===
-Expressive light patterns for Shelly Cury UI and ambient LEDs with 9 communication states.
-
 cury/legacy/cury-mini.shelly.js: Cury Mini Legacy
 ===
 Compact legacy Cury light-language implementation with built-in state logic, timing patterns, and periodic hardware checks.
