@@ -2,7 +2,7 @@
  * @title JK200 BMS MODBUS-RTU Reader
  * @description MODBUS-RTU reader for Jikong JK-PB series BMS over RS485.
  *   Reads cell voltages, pack voltage, current, SOC, temperatures and alarms.
- * @status under development
+ * @status production
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/the_pill/MODBUS/JK200-MBS/the_pill_mbsa_jk200.shelly.js
  */
 
@@ -13,7 +13,7 @@
  *   JK-PB2A8S20P, JK-PB2A16S20P, JK-PB2A20S20P (and other PB variants).
  *
  * To enable MODBUS on the BMS:
- *   Open the JK BMS app → Settings → Device Address → set to 1-15.
+ *   Open the JK BMS app -> Settings -> Device Address -> set to 1-15.
  *   Any non-zero address activates RS485 Modbus slave mode.
  *   Default: 9600 baud, 8N1.
  *
@@ -25,29 +25,28 @@
  *   RS485 VCC     ->   3.3V or 5V
  *   RS485 GND     ->   GND
  *
- * Addressing scheme (JK BMS RS485 Modbus V1.0):
+ * Addressing scheme (actual JK BMS RS485 Modbus V1.0 at 115200 baud):
  *   - Supports only FC 0x03 (Read Holding Registers).
- *   - U_WORD  (16-bit): stride 2 — 1 register data + 1 register padding.
- *   - U_DWORD (32-bit): stride 4 — 2 registers data (hi,lo) + 2 registers padding.
+ *   - U_WORD  (16-bit): stride 1 -- 1 register, no padding.
+ *   - U_DWORD (32-bit): stride 2 -- 2 registers (hi, lo), no trailing padding.
  *   - S_WORD / S_DWORD: same strides, interpreted as signed (two's complement).
  *
  * Two register blocks are read per poll cycle:
- *   Block A — Cell voltages:  FC 0x03, start 0x1200, qty CELL_COUNT * 2
- *   Block B — Key parameters: FC 0x03, start 0x128A, qty 30
+ *   Block A -- Cell voltages:  FC 0x03, start 0x1200, qty CELL_COUNT
+ *   Block B -- Key parameters: FC 0x03, start 0x128A, qty 30
  *
- * Block B register layout (qty 30, start 0x128A):
+ * Block B actual register layout (qty 30, start 0x128A, stride-1 WORDs):
  *   Offset  Reg addr  Field             Type      Unit
- *    0      0x128A    MOSFET temp       S_WORD    0.1 °C
- *    1      0x128B    (padding)
- *    2-5    0x128C-F  (reserved)
- *    6-9    0x1290    Pack voltage      U_DWORD   mV
- *   10-13   0x1294    Pack power        S_DWORD   mW
- *   14-17   0x1298    Pack current      S_DWORD   mA
- *   18-19   0x129C    Temperature 1     S_WORD    0.1 °C
- *   20-21   0x129E    Temperature 2     S_WORD    0.1 °C
- *   22-25   0x12A0    Alarm bitmask     U_DWORD   —
- *   26-27   0x12A4    Balance current   S_WORD    mA
- *   28-29   0x12A6    State of Charge   U_WORD    %
+ *    0      0x128A    MOSFET temp       S_WORD    0.1  degC
+ *    1-2    0x128B-C  (reserved)
+ *    3-4    0x128D-E  Pack voltage      U_DWORD   mV   (hi, lo)
+ *    5-6    0x128F-90 Pack power        S_DWORD   mW   (hi, lo)
+ *    7-8    0x1291-92 Pack current      S_DWORD   mA   (hi, lo)
+ *    9      0x1293    Temperature 1     S_WORD    0.1  degC
+ *   10      0x1294    Temperature 2     S_WORD    0.1  degC
+ *   11-12   0x1295-96 Alarm bitmask     U_DWORD   --   (hi, lo)
+ *   13      0x1297    Balance current   S_WORD    mA
+ *   14      0x1298    State of Charge   U_WORD    %
  *
  * References:
  *   JK BMS RS485 Modbus V1.0: https://github.com/ciciban/jkbms-PB2A16S20P
@@ -56,14 +55,14 @@
 
 /* === CONFIG === */
 var CONFIG = {
-  BAUD_RATE: 9600,
+  BAUD_RATE: 115200,
   MODE: '8N1',
   SLAVE_ID: 1,
-  CELL_COUNT: 16,          // 8, 10, 12, 14, 16, 20, 24 — match your pack
+  CELL_COUNT: 16,          // 8, 10, 12, 14, 16, 20, 24 -- match your pack
   RESPONSE_TIMEOUT: 2000,  // ms; larger for bulk reads at 9600 baud
   INTER_READ_DELAY: 100,   // ms between block A and block B reads
   POLL_INTERVAL: 10000,    // ms between full poll cycles
-  DEBUG: false,
+  DEBUG: true,
 };
 
 /* === REGISTER MAP === */
@@ -203,28 +202,28 @@ function pad3(n) {
   return '' + n;
 }
 
-// millivolts → "X.XXX V"
+// millivolts -> "X.XXX V"
 function fmtV(mv) {
   var sign = mv < 0 ? '-' : '';
   var abs = mv < 0 ? -mv : mv;
   return sign + Math.floor(abs / 1000) + '.' + pad3(abs % 1000) + ' V';
 }
 
-// milliamps → "X.XXX A"
+// milliamps -> "X.XXX A"
 function fmtA(ma) {
   var sign = ma < 0 ? '-' : '';
   var abs = ma < 0 ? -ma : ma;
   return sign + Math.floor(abs / 1000) + '.' + pad3(abs % 1000) + ' A';
 }
 
-// milliwatts → "X.XXX W"
+// milliwatts -> "X.XXX W"
 function fmtW(mw) {
   var sign = mw < 0 ? '-' : '';
   var abs = mw < 0 ? -mw : mw;
   return sign + Math.floor(abs / 1000) + '.' + pad3(abs % 1000) + ' W';
 }
 
-// 0.1 °C units → "X.X C"
+// 0.1  degC units -> "X.X C"
 function fmtC(tenths) {
   var sign = tenths < 0 ? '-' : '';
   var abs = tenths < 0 ? -tenths : tenths;
@@ -355,7 +354,7 @@ function readRegisters(addr, qty, callback) {
   });
 }
 
-/* === PARSE CELL BLOCK (start 0x1200, qty CELL_COUNT * 2) === */
+/* === PARSE CELL BLOCK (start 0x1200, qty CELL_COUNT) === */
 
 // Returns { cells[], minV, maxV, deltaV, minCell, maxCell } (all in mV).
 function parseCellBlock(regs) {
@@ -366,8 +365,8 @@ function parseCellBlock(regs) {
   var maxCell = 0;
 
   for (var i = 0; i < CONFIG.CELL_COUNT; i++) {
-    // stride-2: even indices are data, odd are padding
-    var mv = regs[i * 2];
+    // stride-1: each register is one cell voltage (no padding)
+    var mv = regs[i];
     cells.push(mv);
     if (mv < minV) { minV = mv; minCell = i + 1; }
     if (mv > maxV) { maxV = mv; maxCell = i + 1; }
@@ -385,37 +384,28 @@ function parseCellBlock(regs) {
 
 /* === PARSE MAIN BLOCK (start 0x128A, qty 30) === */
 
-// Register offsets within the response (relative to 0x128A):
-//   [0]      0x128A  MOSFET temp   S_WORD  0.1 °C
-//   [1]      0x128B  (padding)
-//   [2..5]   0x128C  (reserved)
-//   [6..7]   0x1290  Pack voltage  U_DWORD mV   → (regs[6]<<16)|regs[7]
-//   [8..9]   0x1292  (padding)
-//   [10..11] 0x1294  Pack power    S_DWORD mW
-//   [12..13] 0x1296  (padding)
-//   [14..15] 0x1298  Pack current  S_DWORD mA
-//   [16..17] 0x129A  (padding)
-//   [18]     0x129C  Temp 1        S_WORD  0.1 °C
-//   [19]     0x129D  (padding)
-//   [20]     0x129E  Temp 2        S_WORD  0.1 °C
-//   [21]     0x129F  (padding)
-//   [22..23] 0x12A0  Alarm bits    U_DWORD bitmask
-//   [24..25] 0x12A2  (padding)
-//   [26]     0x12A4  Balance curr  S_WORD  mA
-//   [27]     0x12A5  (padding)
-//   [28]     0x12A6  SOC           U_WORD  %
-//   [29]     0x12A7  (padding)
+// Actual register offsets at 115200 baud (stride-1 WORDs, stride-2 DWORDs):
+//   [0]      0x128A  MOSFET temp   S_WORD  0.1  degC
+//   [1..2]   0x128B-C (reserved)
+//   [3..4]   0x128D-E Pack voltage  U_DWORD mV   hi=regs[3], lo=regs[4]
+//   [5..6]   0x128F-90 Pack power   S_DWORD mW   hi=regs[5], lo=regs[6]
+//   [7..8]   0x1291-92 Pack current S_DWORD mA   hi=regs[7], lo=regs[8]
+//   [9]      0x1293  Temp 1        S_WORD  0.1  degC
+//   [10]     0x1294  Temp 2        S_WORD  0.1  degC
+//   [11..12] 0x1295-96 Alarm bits  U_DWORD bitmask  hi=regs[11], lo=regs[12]
+//   [13]     0x1297  Balance curr  S_WORD  mA
+//   [14]     0x1298  SOC           U_WORD  %
 function parseMainBlock(regs) {
   return {
-    mosFetTemp: toSigned16(regs[0]),             // 0.1 °C
-    voltage: regs[6] * 65536 + regs[7],          // mV (U_DWORD)
-    power: toSigned32(regs[10], regs[11]),        // mW (S_DWORD, + charge / - discharge)
-    current: toSigned32(regs[14], regs[15]),      // mA (S_DWORD, + charge / - discharge)
-    temp1: toSigned16(regs[18]),                  // 0.1 °C
-    temp2: toSigned16(regs[20]),                  // 0.1 °C
-    alarms: regs[22] * 65536 + regs[23],          // bitmask
-    balanceCurrent: toSigned16(regs[26]),         // mA
-    soc: regs[28],                                // %
+    mosFetTemp: toSigned16(regs[0]),             // 0.1  degC
+    voltage: regs[3] * 65536 + regs[4],          // mV (U_DWORD)
+    power: toSigned32(regs[5], regs[6]),          // mW (S_DWORD, + charge / - discharge)
+    current: toSigned32(regs[7], regs[8]),        // mA (S_DWORD, + charge / - discharge)
+    temp1: toSigned16(regs[9]),                   // 0.1  degC
+    temp2: toSigned16(regs[10]),                  // 0.1  degC
+    alarms: regs[11] * 65536 + regs[12],          // bitmask
+    balanceCurrent: toSigned16(regs[13]),         // mA
+    soc: regs[14],                                // %
   };
 }
 
@@ -474,7 +464,7 @@ function printData(cellData, main) {
 /* === POLL === */
 
 function pollBMS() {
-  var cellQty = CONFIG.CELL_COUNT * 2;
+  var cellQty = CONFIG.CELL_COUNT;
 
   readRegisters(REG.CELLS_BASE, cellQty, function (err, regs) {
     var cellData = null;
