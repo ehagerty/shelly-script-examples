@@ -1,7 +1,7 @@
 /**
  * @title Cury Button Test Scanner
  * @description Scans BTHome BLE advertisements, logs nearby devices, and prints decoded events for the target BLU button.
- * @status under development
+ * @status production
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/cury/button-control/cury-btn-test.shelly.js
  */
 

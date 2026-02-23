@@ -1,7 +1,7 @@
 /**
  * @title Cury Button Listener
  * @description Listens for BLU button events and controls the paired Cury animation script.
- * @status under development
+ * @status production
  * @link https://github.com/ALLTERCO/shelly-script-examples/blob/main/cury/button-control/cury-btn-listener.shelly.js
  */
 
